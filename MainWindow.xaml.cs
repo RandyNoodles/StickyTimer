@@ -35,7 +35,7 @@ namespace StickyTimer
 
 
 
-            CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}:";
+            CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}";
             CountDownSeconds.Text = _timeLeft.ToString(@"ss");
 
 
@@ -53,7 +53,7 @@ namespace StickyTimer
             {
                 _timeLeft = _timeLeft.Subtract(TimeSpan.FromSeconds(1));
 
-                CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}:";
+                CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}";
                 CountDownSeconds.Text = _timeLeft.ToString(@"ss");
             }
             else
@@ -69,7 +69,7 @@ namespace StickyTimer
             {
                 
                 btn_StartTimer.Content = "\uE769;";//Change to pause symbol
-                CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}:";
+                CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}";
                 CountDownSeconds.Text = _timeLeft.ToString(@"ss");
                 _timer.Start();
                 _isPaused = false;
@@ -93,9 +93,34 @@ namespace StickyTimer
         {
             if(e.ChangedButton == MouseButton.Left)
             {
+                if(this.WindowState == WindowState.Maximized)
+                {
+                    ExitMaximizedAndMoveToMousePosition(e);
+                }
                 this.DragMove();
             }
-            
+        }
+
+        private void ExitMaximizedAndMoveToMousePosition(MouseButtonEventArgs e)
+        {
+            //Get mouse position relative to window
+            var mousePosition = e.GetPosition(this);
+            //Convert mouse position to screen coordinates
+            Point screenPos = PointToScreen(mousePosition);
+
+            //Get mouse position relative as a % of X within the window
+            double relativeX = mousePosition.X / this.ActualWidth;
+
+
+            //Exit Maximized mode
+            this.WindowState = WindowState.Normal;
+
+            //Wait for screen to update
+            this.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
+            //Snap window to where the mouse is
+            this.Left = screenPos.X - (this.ActualWidth * relativeX);
+            this.Top = 2;
         }
 
         //Re-implementing window resize
@@ -108,6 +133,9 @@ namespace StickyTimer
             HwndSource windowSource = HwndSource.FromHwnd(windowHandle);
             windowSource.AddHook(WndProc);
         }
+
+
+        //Some guy's code to re-apply resizing for borderless
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == NativeMethods.WM_NCHITTEST)

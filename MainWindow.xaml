@@ -12,130 +12,144 @@
     ResizeMode="CanResize"
     Topmost="True"
     WindowStyle="None">
-    <Border Background="DarkGreen" CornerRadius="10">
-        <DockPanel>
-            <Grid Margin="3" DockPanel.Dock="Top">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="1" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <!--  Draggable Area  -->
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+    <Border
+        Background="#19006400"
+        ClipToBounds="True"
+        CornerRadius="10">
+        <Grid Margin="3" DockPanel.Dock="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="* " />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <!--  Draggable Area  -->
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-                <Border
-                    Grid.Column="0"
-                    Background="Transparent"
-                    MouseLeftButtonDown="DragArea_MouseLeftButtonDown" />
-
-                <!--  Line marking bottom of topbar  -->
-                <Rectangle
-                    Grid.Row="1"
-                    Grid.ColumnSpan="2"
-                    Fill="DarkGray" />
-                <!--  X, fullscreen, settings buttons  -->
-                <StackPanel
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Orientation="Horizontal">
-                    <Button
-                        x:Name="btn_Settings"
-                        Width="20"
-                        Height="20"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Content="&#xE713;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="15"
-                        Foreground="White" />
-                    <Button
-                        x:Name="btn_Fullscreen"
-                        Width="20"
-                        Height="20"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Content="&#xE740;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="15"
-                        Foreground="White" />
-                    <Button
-                        x:Name="btn_Close"
-                        Width="20"
-                        Height="20"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Content="&#xE711;"
-                        Click="btn_Close_Click"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="15"
-                        Foreground="White" />
-                </StackPanel>
-
-
-            </Grid>
-            <TextBlock
-                x:Name="CountDownHours"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Left"
-                FontSize="48"
-                Foreground="White"
-                Text="00" />
-            <TextBlock
-                x:Name="SeperatorHoursMinutes"
-                VerticalAlignment="Center"
-                Cursor="Arrow"
-                DockPanel.Dock="Left"
-                FontSize="48"
-                Foreground="White"
-                Text=":" />
-            <TextBlock
-                x:Name="CountDownMinutes"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Left"
-                FontSize="48"
-                Foreground="White"
-                Text="00" />
-            <TextBlock
-                x:Name="SeperatorMinutesSeconds"
-                VerticalAlignment="Center"
-                Cursor="Arrow"
-                DockPanel.Dock="Left"
-                FontSize="48"
-                Foreground="White"
-                Text=":" />
-            <TextBlock
-                x:Name="CountDownSeconds"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Left"
-                FontSize="48"
-                Foreground="White"
-                Text="00" />
-            <Button
-                x:Name="btn_StartTimer"
-                Width="35"
-                Height="35"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
+            <Border
+                Grid.Column="0"
                 Background="Transparent"
-                Click="btn_PauseOrPlayTimer"
-                Content="&#xE768;"
-                DockPanel.Dock="Left"
-                FontFamily="Segoe MDL2 Assets"
-                FontSize="30"
-                Foreground="White" />
-           
-        </DockPanel>
+                MouseLeftButtonDown="DragArea_MouseLeftButtonDown" />
+
+            <!--  Line marking bottom of topbar  -->
+            <Rectangle
+                x:Name="rect_ToolbarBottomBorder"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Fill="DarkGray" />
+            <!--  X, fullscreen, settings buttons  -->
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="1"
+                Orientation="Horizontal">
+                <Button
+                    x:Name="btn_Settings"
+                    ToolTip="Settings"
+                    Width="20"
+                    Height="20"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Content="&#xE713;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="15"
+                    Foreground="White" />
+                <Button
+                    x:Name="btn_Fullscreen"
+                    ToolTip="Fullscreen Mode"
+                    Width="20"
+                    Height="20"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Content="&#xE740;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="15"
+                    Foreground="White" />
+                <Button
+                    x:Name="btn_Close"
+                    ToolTip="Exit"
+                    Width="20"
+                    Height="20"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="btn_Close_Click"
+                    Content="&#xE711;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="15"
+                    Foreground="White" />
+            </StackPanel>
+            <Viewbox Grid.Row="2" Grid.ColumnSpan="2" Stretch="Uniform" VerticalAlignment="Center">
+                <DockPanel
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Center">
+
+                    <TextBlock
+                        x:Name="CountDownHours"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Left"
+                        FontSize="48"
+                        Foreground="White"
+                        Text="00" />
+                    <TextBlock
+                        x:Name="SeperatorHoursMinutes"
+                        VerticalAlignment="Center"
+                        Cursor="Arrow"
+                        DockPanel.Dock="Left"
+                        FontSize="48"
+                        Foreground="White"
+                        Text=":" />
+                    <TextBlock
+                        x:Name="CountDownMinutes"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Left"
+                        FontSize="48"
+                        Foreground="White"
+                        Text="00" />
+                    <TextBlock
+                        x:Name="SeperatorMinutesSeconds"
+                        VerticalAlignment="Center"
+                        Cursor="Arrow"
+                        DockPanel.Dock="Left"
+                        FontSize="48"
+                        Foreground="White"
+                        Text=":" />
+                    <TextBlock
+                        x:Name="CountDownSeconds"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Left"
+                        FontSize="48"
+                        Foreground="White"
+                        Text="00" />
+                    <Button
+                        x:Name="btn_StartTimer"
+                        Width="35"
+                        Height="35"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Click="btn_PauseOrPlayTimer"
+                        Content="&#xE768;"
+                        DockPanel.Dock="Left"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="30"
+                        Foreground="White" />
+
+                </DockPanel>
+            </Viewbox>
+        </Grid>
+
     </Border>
 </Window>
