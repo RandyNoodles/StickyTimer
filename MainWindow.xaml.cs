@@ -9,6 +9,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+using System;
+
 
 namespace StickyTimer
 {
@@ -19,12 +23,20 @@ namespace StickyTimer
         private DispatcherTimer _timer;
         private TimeSpan _timeLeft;
         private bool isDragging = false;
+        private bool _isPaused = true;
+
+
 
         public MainWindow()
         {
             InitializeComponent();
+
             _timeLeft = TimeSpan.FromSeconds(600);
-            CountdownText.Text = _timeLeft.ToString(@"mm\:ss");
+
+
+
+            CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}:";
+            CountDownSeconds.Text = _timeLeft.ToString(@"ss");
 
 
             _timer = new DispatcherTimer();
@@ -32,11 +44,17 @@ namespace StickyTimer
             _timer.Tick += TimerTick;
         }
 
+ 
+
+
         private void TimerTick(object? sender, EventArgs e)
         {
-            if (_timeLeft.TotalSeconds > 0) {
+            if (_timeLeft.TotalSeconds > 0)
+            {
                 _timeLeft = _timeLeft.Subtract(TimeSpan.FromSeconds(1));
-                CountdownText.Text = _timeLeft.ToString(@"mm\:ss");
+
+                CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}:";
+                CountDownSeconds.Text = _timeLeft.ToString(@"ss");
             }
             else
             {
@@ -45,27 +63,33 @@ namespace StickyTimer
             }
         }
 
-        private void btn_StartTimer_Click(object sender, RoutedEventArgs e)
+        private void btn_PauseOrPlayTimer(object sender, RoutedEventArgs e)
         {
-            //Need to IMMEDIATELY deduct a second - otherwise it feels like play button didn't work.
-            _timeLeft = _timeLeft.Subtract(TimeSpan.FromSeconds(1));
-            CountdownText.Text = _timeLeft.ToString(@"mm\:ss");
-
-            btn_StartTimer.Visibility = Visibility.Collapsed;
-            btn_PauseTimer.Visibility = Visibility.Visible;
-
-            _timer.Start();
+            if (_isPaused)
+            {
+                
+                btn_StartTimer.Content = "\uE769;";//Change to pause symbol
+                CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}:";
+                CountDownSeconds.Text = _timeLeft.ToString(@"ss");
+                _timer.Start();
+                _isPaused = false;
+            }
+            else
+            {
+                btn_StartTimer.Content = "\uE768;";//Change back to play symbol
+                _timer.Stop();
+                _isPaused = true;
+            }
         }
 
-        private void btn_PauseTimer_Click(object sender, RoutedEventArgs e)
+        private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
-            _timer.Stop();
-
-            btn_PauseTimer.Visibility = Visibility.Collapsed;
-            btn_StartTimer.Visibility = Visibility.Visible;
+            this.Close();
         }
 
-        private void rect_HandleBar_MouseDown(object sender, MouseButtonEventArgs e)
+
+
+        private void DragArea_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if(e.ChangedButton == MouseButton.Left)
             {
@@ -73,5 +97,89 @@ namespace StickyTimer
             }
             
         }
+
+        //Re-implementing window resize
+        private const int GripSize = 16; //Size from the corner inward to detect corner resize
+        private const int BorderSize = 5; //Thickness along each edge
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+            HwndSource windowSource = HwndSource.FromHwnd(windowHandle);
+            windowSource.AddHook(WndProc);
+        }
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == NativeMethods.WM_NCHITTEST)
+            {
+                Point pos = GetMousePosition(lParam);
+                Point rel = PointFromScreen(pos);
+
+                double width = ActualWidth;
+                double height = ActualHeight;
+
+                if (rel.Y <= BorderSize)
+                {
+                    if (rel.X <= BorderSize)
+                    {
+                        handled = true;
+                        return (IntPtr)NativeMethods.HTTOPLEFT;
+                    }
+                    else if (rel.X >= width - BorderSize)
+                    {
+                        handled = true;
+                        return (IntPtr)NativeMethods.HTTOPRIGHT;
+                    }
+                    else
+                    {
+                        handled = true;
+                        return (IntPtr)NativeMethods.HTTOP;
+                    }
+                }
+                else if (rel.Y >= height - BorderSize)
+                {
+                    if (rel.X <= BorderSize)
+                    {
+                        handled = true;
+                        return (IntPtr)NativeMethods.HTBOTTOMLEFT;
+                    }
+                    else if (rel.X >= width - BorderSize)
+                    {
+                        handled = true;
+                        return (IntPtr)NativeMethods.HTBOTTOMRIGHT;
+                    }
+                    else
+                    {
+                        handled = true;
+                        return (IntPtr)NativeMethods.HTBOTTOM;
+                    }
+                }
+                else if (rel.X <= BorderSize)
+                {
+                    handled = true;
+                    return (IntPtr)NativeMethods.HTLEFT;
+                }
+                else if (rel.X >= width - BorderSize)
+                {
+                    handled = true;
+                    return (IntPtr)NativeMethods.HTRIGHT;
+                }
+            }
+
+            return IntPtr.Zero;
+        }
+
+        private static Point GetMousePosition(IntPtr lParam)
+        {
+            int x = unchecked((short)(lParam.ToInt32() & 0xFFFF));
+            int y = unchecked((short)(lParam.ToInt32() >> 16));
+            return new Point(x, y);
+        }
+
+
     }
+
+
+
+
 }

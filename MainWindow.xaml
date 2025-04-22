@@ -1,53 +1,141 @@
-﻿<Window x:Class="StickyTimer.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Countdown Timer" Height="80" Width="200"
-        WindowStyle="None" 
-        AllowsTransparency="True" 
-        Background="Transparent"
-        Topmost="True"
-        ResizeMode="NoResize">
-    <Canvas>
-        <TextBlock x:Name="CountdownText"
-                   FontSize="48"
-                   Foreground="White"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Text="00:10" Canvas.Left="43" Canvas.Top="8" />
+﻿<Window
+    x:Class="StickyTimer.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Countdown Timer"
+    Width="235"
+    Height="90"
+    MinWidth="300"
+    MinHeight="100"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ResizeMode="CanResize"
+    Topmost="True"
+    WindowStyle="None">
+    <Border Background="DarkGreen" CornerRadius="10">
+        <DockPanel>
+            <Grid Margin="3" DockPanel.Dock="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <!--  Draggable Area  -->
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-        <Button x:Name="btn_StartTimer"
-                Click="btn_StartTimer_Click"
-                Background="Transparent" 
-                Content="&#xE768;" 
-                FontFamily="Segoe MDL2 Assets"
+                <Border
+                    Grid.Column="0"
+                    Background="Transparent"
+                    MouseLeftButtonDown="DragArea_MouseLeftButtonDown" />
+
+                <!--  Line marking bottom of topbar  -->
+                <Rectangle
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Fill="DarkGray" />
+                <!--  X, fullscreen, settings buttons  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Orientation="Horizontal">
+                    <Button
+                        x:Name="btn_Settings"
+                        Width="20"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Content="&#xE713;"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="15"
+                        Foreground="White" />
+                    <Button
+                        x:Name="btn_Fullscreen"
+                        Width="20"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Content="&#xE740;"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="15"
+                        Foreground="White" />
+                    <Button
+                        x:Name="btn_Close"
+                        Width="20"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Content="&#xE711;"
+                        Click="btn_Close_Click"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="15"
+                        Foreground="White" />
+                </StackPanel>
+
+
+            </Grid>
+            <TextBlock
+                x:Name="CountDownHours"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
+                FontSize="48"
                 Foreground="White"
-                FontSize="30"
+                Text="00" />
+            <TextBlock
+                x:Name="SeperatorHoursMinutes"
+                VerticalAlignment="Center"
+                Cursor="Arrow"
+                DockPanel.Dock="Left"
+                FontSize="48"
+                Foreground="White"
+                Text=":" />
+            <TextBlock
+                x:Name="CountDownMinutes"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
+                FontSize="48"
+                Foreground="White"
+                Text="00" />
+            <TextBlock
+                x:Name="SeperatorMinutesSeconds"
+                VerticalAlignment="Center"
+                Cursor="Arrow"
+                DockPanel.Dock="Left"
+                FontSize="48"
+                Foreground="White"
+                Text=":" />
+            <TextBlock
+                x:Name="CountDownSeconds"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
+                FontSize="48"
+                Foreground="White"
+                Text="00" />
+            <Button
+                x:Name="btn_StartTimer"
                 Width="35"
                 Height="35"
+                VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Margin="162,27,3,18"/>
-        <Button x:Name="btn_PauseTimer"
-                Visibility="Collapsed"
-                Click="btn_PauseTimer_Click"
-                Background="Transparent" 
-                Content="&#xE769;" 
+                Background="Transparent"
+                Click="btn_PauseOrPlayTimer"
+                Content="&#xE768;"
+                DockPanel.Dock="Left"
                 FontFamily="Segoe MDL2 Assets"
-                Foreground="White"
                 FontSize="30"
-                Width="35"
-                Height="35"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Margin="162,27,3,18"/>
-        <Rectangle x:Name="rect_HandleBar"
-                   MouseDown="rect_HandleBar_MouseDown"
-                   Width="4" 
-                   Height="40" 
-                   Cursor="ScrollAll"
-                   Fill="Gray" 
-                   RadiusX="2" 
-                   RadiusY="2" 
-                   Margin="34,24,162,16"/>
-    </Canvas>
+                Foreground="White" />
+           
+        </DockPanel>
+    </Border>
 </Window>
