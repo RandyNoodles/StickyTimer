@@ -82,9 +82,18 @@ namespace StickyTimer
             }
         }
 
+        ////////////////////////////
+        ///Top-Right Corner Buttons
         private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void btn_Settings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settings = new SettingsWindow();
+            settings.Owner = this;
+            settings.ShowDialog();
         }
 
 
