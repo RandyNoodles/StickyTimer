@@ -27,20 +27,20 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            
+
             <Border
                 Grid.Column="0"
                 Background="Transparent"
                 MouseLeftButtonDown="DragArea_MouseLeftButtonDown" />
 
             <!--  Line marking bottom of topbar  -->
-            
+
             <Rectangle
                 x:Name="rect_ToolbarBottomBorder"
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
                 Fill="DarkGray" />
-            
+
             <!--  X, fullscreen, settings buttons  -->
             <StackPanel
                 Grid.Row="0"
@@ -48,8 +48,6 @@
                 Orientation="Horizontal">
                 <Button
                     x:Name="btn_Settings"
-                    ToolTip="Settings"
-                    Click="btn_Settings_Click"
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
@@ -57,13 +55,14 @@
                     VerticalContentAlignment="Center"
                     Background="Transparent"
                     BorderBrush="Transparent"
+                    Click="btn_Settings_Click"
                     Content="&#xF8B0;"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="15"
-                    Foreground="White" />
+                    Foreground="White"
+                    ToolTip="Settings" />
                 <Button
                     x:Name="btn_Fullscreen"
-                    ToolTip="Fullscreen Mode"
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
@@ -74,10 +73,10 @@
                     Content="&#xE92D;"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="15"
-                    Foreground="White" />
+                    Foreground="White"
+                    ToolTip="Fullscreen Mode" />
                 <Button
                     x:Name="btn_Close"
-                    ToolTip="Exit"
                     Width="20"
                     Height="20"
                     VerticalAlignment="Center"
@@ -89,19 +88,39 @@
                     Content="&#xE8BB;"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="15"
-                    Foreground="White" />
+                    Foreground="White"
+                    ToolTip="Exit" />
             </StackPanel>
-            <Viewbox Grid.Row="2" Grid.ColumnSpan="2" Stretch="Uniform" VerticalAlignment="Center">
-                <DockPanel
-                    Grid.ColumnSpan="2"
-                    HorizontalAlignment="Center">
+            <Viewbox
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                VerticalAlignment="Center"
+                Stretch="Uniform">
+                <DockPanel Grid.ColumnSpan="2" HorizontalAlignment="Center">
 
-                    <TextBlock
+                    <!--
+                        Style to make time sections look like TextBlocks.
+                        - On "Play", set to readonly
+                        - Background/border hidden
+                        - Cursor = Arrow
+                        -
+                    -->
+                    <TextBox
                         x:Name="CountDownHours"
                         VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CaretBrush="Transparent"
+                        Cursor="Arrow"
                         DockPanel.Dock="Left"
                         FontSize="48"
                         Foreground="White"
+                        GotFocus="DigitBox_GotFocus"
+                        LostFocus="DigitBox_LostFocus"
+                        MaxLength="2"
+                        PreviewKeyDown="DigitBox_PreviewKeyDown"
+                        PreviewTextInput="DigitBox_PreviewTextInput"
+                        Tag="Next:CountDownMinutes"
                         Text="00" />
                     <TextBlock
                         x:Name="SeperatorHoursMinutes"
@@ -111,12 +130,20 @@
                         FontSize="48"
                         Foreground="White"
                         Text=":" />
-                    <TextBlock
+                    <TextBox
                         x:Name="CountDownMinutes"
                         VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CaretBrush="Transparent"
                         DockPanel.Dock="Left"
                         FontSize="48"
                         Foreground="White"
+                        GotFocus="DigitBox_GotFocus"
+                        LostFocus="DigitBox_LostFocus"
+                        PreviewKeyDown="DigitBox_PreviewKeyDown"
+                        PreviewTextInput="DigitBox_PreviewTextInput"
+                        Tag="Next:CountDownSeconds"
                         Text="00" />
                     <TextBlock
                         x:Name="SeperatorMinutesSeconds"
@@ -126,13 +153,22 @@
                         FontSize="48"
                         Foreground="White"
                         Text=":" />
-                    <TextBlock
+                    <TextBox
                         x:Name="CountDownSeconds"
                         Margin="0,0,10,0"
                         VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CaretBrush="Transparent"
                         DockPanel.Dock="Left"
                         FontSize="48"
                         Foreground="White"
+                        GotFocus="DigitBox_GotFocus"
+                        LostFocus="DigitBox_LostFocus"
+                        PreviewKeyDown="DigitBox_PreviewKeyDown"
+                        PreviewTextInput="DigitBox_PreviewTextInput"
+                        MouseWheel="CountDownSeconds_MouseWheel"
+                        Tag="Next:CountDownHours"
                         Text="00" />
                     <Button
                         x:Name="btn_StartTimer"

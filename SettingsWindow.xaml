@@ -21,9 +21,23 @@
         >
         <Grid Margin="3">
             <Grid.RowDefinitions>
-                <!-- Close Bar -->
+                <!-- Close/Drag/etc -->
                 <RowDefinition Height="Auto"/>
-                
+                <!-- Seperation line -->
+                <RowDefinition Height="1"/>
+                <!-- Light/Dark Mode Dropdown -->
+                <RowDefinition Height="Auto"/>
+                <!-- Background Transperency Slider -->
+                <RowDefinition Height="Auto"/>
+                <!-- Alarm Volume Slider -->
+                <RowDefinition Height="Auto"/>
+                <!-- Alarm sound selector (Spot to insert .wav or something) -->
+                <RowDefinition Height="Auto"/>
+                <!-- Pomodoro Mode Checkbox -->
+                <RowDefinition Height="Auto"/>
+                <!-- Pomodoro Options Grid -->
+                <RowDefinition Height="*"/>
+
             </Grid.RowDefinitions>
 
         </Grid>

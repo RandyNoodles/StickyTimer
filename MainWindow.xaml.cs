@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
-using System;
+using System.Windows.Input;
 
 
 namespace StickyTimer
@@ -19,12 +19,17 @@ namespace StickyTimer
   
     public partial class MainWindow : Window
     {
-
-        private DispatcherTimer _timer;
-        private TimeSpan _timeLeft;
         private bool isDragging = false;
         private bool _isPaused = true;
 
+
+        private DispatcherTimer _timer;
+        private TimeSpan _timeLeft;
+
+
+        private ResizeHandler _resizeHandler;
+
+        String digitBoxTemp = String.Empty;
 
 
         public MainWindow()
@@ -33,18 +38,25 @@ namespace StickyTimer
 
             _timeLeft = TimeSpan.FromSeconds(600);
 
-
-
             CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}";
             CountDownSeconds.Text = _timeLeft.ToString(@"ss");
-
 
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += TimerTick;
         }
 
- 
+        //Re-implementing window resize
+        private const int RESIZE_BORDER_WIDTH = 5; //Clickable width along each edge
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
+            HwndSource windowSource = HwndSource.FromHwnd(windowHandle);
+
+            _resizeHandler = new ResizeHandler(this, RESIZE_BORDER_WIDTH);
+            windowSource.AddHook(_resizeHandler.WndProc);
+        }
 
 
         private void TimerTick(object? sender, EventArgs e)
@@ -132,88 +144,93 @@ namespace StickyTimer
             this.Top = 2;
         }
 
-        //Re-implementing window resize
-        private const int GripSize = 16; //Size from the corner inward to detect corner resize
-        private const int BorderSize = 5; //Thickness along each edge
-        protected override void OnSourceInitialized(EventArgs e)
+        private void DigitBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            base.OnSourceInitialized(e);
-            IntPtr windowHandle = new WindowInteropHelper(this).Handle;
-            HwndSource windowSource = HwndSource.FromHwnd(windowHandle);
-            windowSource.AddHook(WndProc);
+            TextBox txtBox = (TextBox)e.Source;
+            txtBox.Background = new SolidColorBrush(Colors.Plum);
         }
 
-
-        //Some guy's code to re-apply resizing for borderless
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        private void DigitBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (msg == NativeMethods.WM_NCHITTEST)
+            TextBox txtBox = (TextBox)e.Source;
+            txtBox.Background = new SolidColorBrush(Colors.Transparent);
+        }
+
+        private void DigitBox_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        private void DigitBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            TextBox txtBox = (TextBox)sender;
+
+            //If ':' is pressed, move to next box
+            if (e.Text == ":")
             {
-                Point pos = GetMousePosition(lParam);
-                Point rel = PointFromScreen(pos);
+                string tag = txtBox.Tag.ToString();
+                string nextBoxName = tag.Substring(5);
+                var next = (TextBox)FindName(nextBoxName);
 
-                double width = ActualWidth;
-                double height = ActualHeight;
+                e.Handled = true;
 
-                if (rel.Y <= BorderSize)
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (rel.X <= BorderSize)
-                    {
-                        handled = true;
-                        return (IntPtr)NativeMethods.HTTOPLEFT;
-                    }
-                    else if (rel.X >= width - BorderSize)
-                    {
-                        handled = true;
-                        return (IntPtr)NativeMethods.HTTOPRIGHT;
-                    }
-                    else
-                    {
-                        handled = true;
-                        return (IntPtr)NativeMethods.HTTOP;
-                    }
-                }
-                else if (rel.Y >= height - BorderSize)
-                {
-                    if (rel.X <= BorderSize)
-                    {
-                        handled = true;
-                        return (IntPtr)NativeMethods.HTBOTTOMLEFT;
-                    }
-                    else if (rel.X >= width - BorderSize)
-                    {
-                        handled = true;
-                        return (IntPtr)NativeMethods.HTBOTTOMRIGHT;
-                    }
-                    else
-                    {
-                        handled = true;
-                        return (IntPtr)NativeMethods.HTBOTTOM;
-                    }
-                }
-                else if (rel.X <= BorderSize)
-                {
-                    handled = true;
-                    return (IntPtr)NativeMethods.HTLEFT;
-                }
-                else if (rel.X >= width - BorderSize)
-                {
-                    handled = true;
-                    return (IntPtr)NativeMethods.HTRIGHT;
-                }
+                    next?.Focus();
+                }), System.Windows.Threading.DispatcherPriority.Input);
+                return;
             }
 
-            return IntPtr.Zero;
+            if (!char.IsDigit(e.Text, 0))
+            {
+                //If delete is pressed, reset box to "00"
+                if(e.Text[0] == (char)Key.Back || e.Text[0] == (char)Key.Delete)
+                {
+                    txtBox.Text = "00";
+                    txtBox.CaretIndex = txtBox.Text.Length;
+                }
+                
+                //Otherwise, just ignore.
+
+                e.Handled = true;
+                return;
+            }
+
+            //Mimic digital UI input
+            //I.e Input number in rightmost column & shift left
+            string current = txtBox.Text.PadLeft(2, '0');
+            string newText = (current + e.Text).Substring(current.Length + e.Text.Length - 2);
+
+            txtBox.Text = newText;
+            txtBox.CaretIndex = newText.Length;
+            e.Handled = true;
         }
 
-        private static Point GetMousePosition(IntPtr lParam)
+        //If delete key is pressed, reset box to 00
+        private void DigitBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            int x = unchecked((short)(lParam.ToInt32() & 0xFFFF));
-            int y = unchecked((short)(lParam.ToInt32() >> 16));
-            return new Point(x, y);
+            if(e.Key == Key.Back || e.Key == Key.Delete)
+            {
+                TextBox txtBox = (TextBox)sender;
+                txtBox.Text = "00";
+            }
         }
 
+        private void CountDownSeconds_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            TextBox txtBox = (TextBox)sender;
 
+            if(!int.TryParse(txtBox.Text, out int currentSeconds))
+            {
+                //Silently ignore I guess?
+                e.Handled = true;
+                return;
+            }
+            currentSeconds += e.Delta;
+
+            //I think I need to reformat my time here to be more of an MVVM-style thing?
+
+        }
     }
 
 
