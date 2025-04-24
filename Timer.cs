@@ -19,6 +19,20 @@ namespace StickyTimer
 
         private const String _TAG = "Timer()";
 
+        public string HH()
+        {
+            return TimeLeft.Hours.ToString(@"hh");
+        }
+        public string MM()
+        {
+            return TimeLeft.Minutes.ToString(@"mm");
+        }
+        public string SS()
+        {
+            return TimeLeft.Minutes.ToString(@"ss");
+        }
+
+
         ///////////
         ///Events
 
