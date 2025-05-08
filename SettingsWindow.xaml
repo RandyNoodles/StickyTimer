@@ -36,7 +36,7 @@
                 <!-- Pomodoro Mode Checkbox -->
                 <RowDefinition Height="Auto"/>
                 <!-- Pomodoro Options Grid -->
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="{}"/>
 
             </Grid.RowDefinitions>
 

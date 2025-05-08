@@ -12,7 +12,8 @@ using System.Windows.Threading;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows.Input;
-
+using System.Media;
+using StickyTimer.ViewModel;
 
 namespace StickyTimer
 {
@@ -22,6 +23,8 @@ namespace StickyTimer
         private bool isDragging = false;
         private bool _isPaused = true;
 
+
+        MainViewModel viewModel;
 
         private DispatcherTimer _timer;
         private TimeSpan _timeLeft;
@@ -36,15 +39,17 @@ namespace StickyTimer
         {
             InitializeComponent();
 
-            _timeLeft = TimeSpan.FromSeconds(600);
+            viewModel = new MainViewModel();
 
-            CountDownMinutes.Text = $"{_timeLeft.Minutes:D2}";
-            CountDownSeconds.Text = _timeLeft.ToString(@"ss");
-
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            _timer.Tick += TimerTick;
+            DataContext = viewModel;
         }
+
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            viewModel.SaveConfig();
+        }
+
 
         //Re-implementing window resize
         private const int RESIZE_BORDER_WIDTH = 5; //Clickable width along each edge
@@ -231,6 +236,7 @@ namespace StickyTimer
             //I think I need to reformat my time here to be more of an MVVM-style thing?
 
         }
+
     }
 
 

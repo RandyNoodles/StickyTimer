@@ -1,0 +1,21 @@
+{
+  "config": {
+    "saved-state": {
+      "time-start": "00:01:00",
+      "time-remaining": "00:01:00"
+    },
+    "ui": {
+      "transparency": 5.0,
+      "dark-mode": true,
+      "theme": "vampire"
+    },
+    "settings": {
+      "alarm-on": true,
+      "alarm-path": "bongos.wav",
+      "alarm-volume": 100,
+      "pomodoro-mode": false,
+      "pomodoro-break": 10,
+      "pomodoro-cycles": 3
+    }
+  }
+}

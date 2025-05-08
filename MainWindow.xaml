@@ -11,7 +11,8 @@
     Background="Transparent"
     ResizeMode="CanResize"
     Topmost="True"
-    WindowStyle="None">
+    WindowStyle="None"
+    Closing="Window_Closing">
     <Border
         Background="#19006400"
         ClipToBounds="True"
